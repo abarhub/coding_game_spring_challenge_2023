@@ -1,21 +1,21 @@
 import java.util.*;
 
-class Case{
+class Case {
 
     int no;
     int type;
     int initialResources;
-    int neigh0=-1;
+    int neigh0 = -1;
     int neigh1 = -1;
     int neigh2 = -1;
     int neigh3 = -1;
     int neigh4 = -1;
-    int neigh5=-1;
+    int neigh5 = -1;
 
     @Override
     public String toString() {
-        return "no="+no+",initialResources="+initialResources+",neigh0="+neigh0+
-                ",neigh1="+neigh1+",neigh2="+neigh2+",neigh3="+neigh3+",neigh4="+neigh4+",neigh5="+neigh5;
+        return "no=" + no + ",initialResources=" + initialResources + ",neigh0=" + neigh0 +
+                ",neigh1=" + neigh1 + ",neigh2=" + neigh2 + ",neigh3=" + neigh3 + ",neigh4=" + neigh4 + ",neigh5=" + neigh5;
     }
 }
 
@@ -148,9 +148,9 @@ class Player {
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
         int numberOfCells = in.nextInt(); // amount of hexagonal cells in this map   
-        Map<Integer,Case> map=new HashMap<Integer,Case>();
-        List<Integer> caseBase=new ArrayList<>();
-        List<Integer> caseBaseOpposant=new ArrayList<>();
+        Map<Integer, Case> map = new HashMap<Integer, Case>();
+        List<Integer> caseBase = new ArrayList<>();
+        List<Integer> caseBaseOpposant = new ArrayList<>();
 
 
         for (int i = 0; i < numberOfCells; i++) {
@@ -162,17 +162,17 @@ class Player {
             int neigh3 = in.nextInt();
             int neigh4 = in.nextInt();
             int neigh5 = in.nextInt();
-            Case c=new Case();
-            c.no=i;
-            c.initialResources=initialResources;
-            c.type=type;
-            c.neigh0=neigh0;
-            c.neigh1=neigh1;
-            c.neigh2=neigh2;
-            c.neigh3=neigh3;
-            c.neigh4=neigh4;
-            c.neigh5=neigh5;
-            map.put(i,c);
+            Case c = new Case();
+            c.no = i;
+            c.initialResources = initialResources;
+            c.type = type;
+            c.neigh0 = neigh0;
+            c.neigh1 = neigh1;
+            c.neigh2 = neigh2;
+            c.neigh3 = neigh3;
+            c.neigh4 = neigh4;
+            c.neigh5 = neigh5;
+            map.put(i, c);
         }
         int numberOfBases = in.nextInt();
         for (int i = 0; i < numberOfBases; i++) {
@@ -184,33 +184,33 @@ class Player {
             caseBaseOpposant.add(oppBaseIndex);
         }
 
-        System.err.println("liste cases:"+map);
-        System.err.println("caseBase:"+caseBase);
-        System.err.println("caseBaseOpposants:"+caseBaseOpposant);
+        System.err.println("liste cases:" + map);
+        System.err.println("caseBase:" + caseBase);
+        System.err.println("caseBaseOpposants:" + caseBaseOpposant);
 
-        int caseFinale=-1;
+        int caseFinale = -1;
         // game loop
         while (true) {
-            int noCase=-1;
+            int noCase = -1;
 
-            Map<Integer,Node> map2=new HashMap<Integer,Node>();
-            Set<Integer> set=new HashSet<Integer>();
+            Map<Integer, Node> map2 = new HashMap<Integer, Node>();
+            Set<Integer> set = new HashSet<Integer>();
 
             for (int i = 0; i < numberOfCells; i++) {
-                Node n=new Node(""+i);
-                map2.put(i,n);
+                Node n = new Node("" + i);
+                map2.put(i, n);
                 int resources = in.nextInt(); // the current amount of eggs/crystals on this cell
                 int myAnts = in.nextInt(); // the amount of your ants on this cell
                 int oppAnts = in.nextInt(); // the amount of opponent ants on this cell
-                System.err.println("case:"+i+",ressource:"+resources+",myAnts:"+myAnts+",oppAnts:"+oppAnts);
-                if(resources>0&&noCase==-1){
-                    noCase=i;
+                System.err.println("case:" + i + ",ressource:" + resources + ",myAnts:" + myAnts + ",oppAnts:" + oppAnts);
+                if (resources > 0 && noCase == -1) {
+                    noCase = i;
                 }
-                if(caseFinale==-1&&myAnts>0){
-                    caseFinale=i;
+                if (caseFinale == -1 && myAnts > 0) {
+                    caseFinale = i;
                 }
-                if(resources>0){
-                    if(map.get(i).type>0){
+                if (resources > 0) {
+                    if (map.get(i).type > 0) {
                         set.add(i);
                     }
                 }
@@ -219,37 +219,37 @@ class Player {
 
             Graph graph = new Graph();
             for (int i = 0; i < numberOfCells; i++) {
-                Node n=map2.get(i);
-                Case c=map.get(i);
-                if(c!=null){
-                    if(c.neigh0>=0){
-                        Node n2=map2.get(c.neigh0);
+                Node n = map2.get(i);
+                Case c = map.get(i);
+                if (c != null) {
+                    if (c.neigh0 >= 0) {
+                        Node n2 = map2.get(c.neigh0);
                         n.addDestination(n2, 1);
                     }
                 }
                 graph.addNode(n);
             }
 
-            System.err.println("set="+set);
+            System.err.println("set=" + set);
 
             // Write an action using System.out.println()
             // To debug: 
             System.err.println("Debug messages...");
 
 
-            if(set.isEmpty()){
+            if (set.isEmpty()) {
                 System.out.println("WAIT");
             } else {
-                Integer base=caseBase.get(0);
-                Map<Integer,List<Integer>> map3=new TreeMap<Integer,List<Integer>>();
-                Node n=map2.get(base);
+                Integer base = caseBase.get(0);
+                Map<Integer, List<Integer>> map3 = new TreeMap<Integer, List<Integer>>();
+                Node n = map2.get(base);
                 graph = Dijkstra.calculateShortestPathFromSource(graph, n);
 
-                for(Integer no:set){
-                    Optional<Node> n2=graph.getNodes().stream().filter(x->Objects.equals(x.getName(), ""+no)).findFirst();
-                    if(n2.isPresent()){
-                        Integer len=n2.get().getDistance();
-                        if(map3.containsKey(len)){
+                for (Integer no : set) {
+                    Optional<Node> n2 = graph.getNodes().stream().filter(x -> Objects.equals(x.getName(), "" + no)).findFirst();
+                    if (n2.isPresent()) {
+                        Integer len = n2.get().getDistance();
+                        if (map3.containsKey(len)) {
                             map3.get(len).add(no);
                         } else {
                             map3.put(len, new ArrayList<>());
@@ -257,11 +257,11 @@ class Player {
                         }
                     }
                 }
-                String s="";
-                boolean fin=false;
-                int nb=0;
-                for(Map.Entry<Integer,List<Integer>> entry:map3.entrySet()){
-                    for(Integer no: entry.getValue()) {
+                String s = "";
+                boolean fin = false;
+                int nb = 0;
+                for (Map.Entry<Integer, List<Integer>> entry : map3.entrySet()) {
+                    for (Integer no : entry.getValue()) {
                         int poids = 0;
                         int type = map.get(no).type;
                         if (type == 1) {
@@ -276,9 +276,9 @@ class Player {
                             s += "LINE " + no + " " + base + " " + poids;
                             nb++;
                         }
-                        if(nb>5)break;
+                        if (nb > 5) break;
                     }
-                    if(nb>5)break;
+                    if (nb > 5) break;
                 }
                 /*for(Integer no:set){
                     int poids=0;
