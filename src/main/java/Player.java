@@ -241,14 +241,46 @@ class Player {
                 System.out.println("WAIT");
             } else {
                 Integer base=caseBase.get(0);
-                Map<Integer,Integer> map3=new HashMap<Integer,Integer>();
-                /*Node n=map2.get(no);
+                Map<Integer,List<Integer>> map3=new TreeMap<Integer,List<Integer>>();
+                Node n=map2.get(base);
                 graph = Dijkstra.calculateShortestPathFromSource(graph, n);
+
                 for(Integer no:set){
-                    graph.getNodes().stream().filter(x->Objects.equals(x.getName(), ""+no)).findFirst();
-                }*/
+                    Optional<Node> n2=graph.getNodes().stream().filter(x->Objects.equals(x.getName(), ""+no)).findFirst();
+                    if(n2.isPresent()){
+                        Integer len=n2.get().getDistance();
+                        if(map3.containsKey(len)){
+                            map3.get(len).add(no);
+                        } else {
+                            map3.put(len, new ArrayList<>());
+                            map3.get(len).add(no);
+                        }
+                    }
+                }
                 String s="";
-                for(Integer no:set){
+                boolean fin=false;
+                int nb=0;
+                for(Map.Entry<Integer,List<Integer>> entry:map3.entrySet()){
+                    for(Integer no: entry.getValue()) {
+                        int poids = 0;
+                        int type = map.get(no).type;
+                        if (type == 1) {
+                            poids = 1;
+                        } else if (type == 2) {
+                            poids = 2;
+                        }
+                        if (poids > 0) {
+                            if (s.length() > 0) {
+                                s += ";";
+                            }
+                            s += "LINE " + no + " " + base + " " + poids;
+                            nb++;
+                        }
+                        if(nb>5)break;
+                    }
+                    if(nb>5)break;
+                }
+                /*for(Integer no:set){
                     int poids=0;
                     int type=map.get(no).type;
                     if(type==1){
@@ -262,7 +294,7 @@ class Player {
                         }
                         s+="LINE "+no+" "+base+" "+poids;
                     }
-                }
+                }*/
                 System.out.println(s);
             }
 
