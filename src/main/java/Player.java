@@ -202,7 +202,7 @@ class Player {
                 int resources = in.nextInt(); // the current amount of eggs/crystals on this cell
                 int myAnts = in.nextInt(); // the amount of your ants on this cell
                 int oppAnts = in.nextInt(); // the amount of opponent ants on this cell
-                System.err.println("case:" + i + ",ressource:" + resources + ",myAnts:" + myAnts + ",oppAnts:" + oppAnts);
+                //System.err.println("case:" + i + ",ressource:" + resources + ",myAnts:" + myAnts + ",oppAnts:" + oppAnts);
                 if (resources > 0 && noCase == -1) {
                     noCase = i;
                 }
@@ -260,14 +260,15 @@ class Player {
                 String s = "";
                 boolean fin = false;
                 int nb = 0;
+                int max=5;
                 for (Map.Entry<Integer, List<Integer>> entry : map3.entrySet()) {
                     for (Integer no : entry.getValue()) {
                         int poids = 0;
                         int type = map.get(no).type;
                         if (type == 1) {
-                            poids = 1;
-                        } else if (type == 2) {
                             poids = 2;
+                        } else if (type == 2) {
+                            poids = 1;
                         }
                         if (poids > 0) {
                             if (s.length() > 0) {
@@ -276,9 +277,9 @@ class Player {
                             s += "LINE " + no + " " + base + " " + poids;
                             nb++;
                         }
-                        if (nb > 5) break;
+                        if (nb > max) break;
                     }
-                    if (nb > 5) break;
+                    if (nb > max) break;
                 }
                 /*for(Integer no:set){
                     int poids=0;
