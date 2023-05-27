@@ -212,7 +212,7 @@ class Player {
             Map<Integer, Node> map2 = new HashMap<Integer, Node>();
             Set<Integer> set = new HashSet<Integer>();
 
-            int totalMyAnts=0;
+            int totalMyAnts = 0;
 
             for (int i = 0; i < numberOfCells; i++) {
                 Node n = new Node("" + i);
@@ -221,7 +221,7 @@ class Player {
                 int myAnts = in.nextInt(); // the amount of your ants on this cell
                 int oppAnts = in.nextInt(); // the amount of opponent ants on this cell
                 //System.err.println("case:" + i + ",ressource:" + resources + ",myAnts:" + myAnts + ",oppAnts:" + oppAnts);
-                totalMyAnts+=myAnts;
+                totalMyAnts += myAnts;
                 if (resources > 0 && noCase == -1) {
                     noCase = i;
                 }
@@ -270,7 +270,7 @@ class Player {
                     Optional<Node> n2 = graph.getNodes().stream().filter(x -> Objects.equals(x.getName(), "" + no)).findFirst();
                     if (n2.isPresent()) {
                         Integer len = n2.get().getDistance();
-                        if(len<100_000) {
+                        if (len < 100_000) {
                             if (map3.containsKey(len)) {
                                 map3.get(len).add(no);
                             } else {
@@ -284,14 +284,16 @@ class Player {
                 String s = "";
                 boolean fin = false;
                 int nb = 0;
-                int max=5;
-                int nbAnts=totalMyAnts;
+                int max = 5;
+                int nbAnts = totalMyAnts;
+                List<Integer> list = new ArrayList<>();
                 for (Map.Entry<Integer, List<Integer>> entry : map3.entrySet()) {
-                    int len= entry.getKey();
-                    if(len<100_000) {
+                    int len = entry.getKey();
+                    if (len < 100_000) {
                         for (Integer no : entry.getValue()) {
                             int poids = 0;
-                            int type = map.get(no).type;
+                            Case c = map.get(no);
+                            int type = c.type;
                             if (type == 1) {
                                 poids = 2;
                                 //poids = 1;
@@ -299,10 +301,23 @@ class Player {
                                 poids = 1;
                             }
                             if (poids > 0) {
+                                list.add(no);
+                                int src = base;
+                                if (len > 1) {
+                                    for (int n2 : list) {
+                                        if (c.neigh0 == n2 || c.neigh1 == n2 ||
+                                                c.neigh2 == n2 || c.neigh3 == n2 ||
+                                                c.neigh4 == n2 || c.neigh5 == n2) {
+                                            src = n2;
+                                            break;
+                                        }
+                                    }
+                                }
+
                                 if (s.length() > 0) {
                                     s += ";";
                                 }
-                                s += "LINE " + no + " " + base + " " + poids;
+                                s += "LINE " + no + " " + src + " " + poids;
                                 nb++;
                             }
 
@@ -310,16 +325,20 @@ class Player {
 
                             if (nbAnts <= 0) {
                                 fin = true;
+                                System.err.println("fin, nbAnts=" + nbAnts + ",totalMyAnts=" + totalMyAnts);
                                 break;
                             }
                         }
+                    } else {
+                        fin = true;
+                        System.err.println("fin, len=" + len);
                     }
                     if (fin) {
                         break;
                     }
                 }
-                if(s==null||s.isEmpty()){
-                    s="WAIT";
+                if (s == null || s.isEmpty()) {
+                    s = "WAIT";
                 }
                 System.out.println(s);
             }
