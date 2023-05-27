@@ -290,7 +290,17 @@ class Player {
                 for (Map.Entry<Integer, List<Integer>> entry : map3.entrySet()) {
                     int len = entry.getKey();
                     if (len < 100_000) {
+                        int len2 = len;
+                        List<Integer> liste2 = new ArrayList<>();
                         for (Integer no : entry.getValue()) {
+                            Case c = map.get(no);
+                            if (c.type == 1) {// les oeufs au debut
+                                liste2.add(0, no);
+                            } else if (c.type == 2) {// les resources à la fin
+                                liste2.add(no);
+                            }
+                        }
+                        for (Integer no : liste2) {
                             int poids = 0;
                             Case c = map.get(no);
                             int type = c.type;
@@ -303,12 +313,14 @@ class Player {
                             if (poids > 0) {
                                 list.add(no);
                                 int src = base;
-                                if (len > 1) {
+                                if (len2 > 1) {
                                     for (int n2 : list) {
                                         if (c.neigh0 == n2 || c.neigh1 == n2 ||
                                                 c.neigh2 == n2 || c.neigh3 == n2 ||
                                                 c.neigh4 == n2 || c.neigh5 == n2) {
                                             src = n2;
+                                            // la distance est de 1 en plus
+                                            len2 = 1;
                                             break;
                                         }
                                     }
@@ -321,7 +333,7 @@ class Player {
                                 nb++;
                             }
 
-                            nbAnts -= len;
+                            nbAnts -= len2;
 
                             if (nbAnts <= 0) {
                                 fin = true;
