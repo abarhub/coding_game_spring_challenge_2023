@@ -34,6 +34,13 @@ class Graph {
     public void setNodes(Set<Node> nodes) {
         this.nodes = nodes;
     }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Graph.class.getSimpleName() + "[", "]")
+                .add("nodes=" + nodes)
+                .toString();
+    }
 }
 
 class Node {
@@ -86,6 +93,15 @@ class Node {
         this.shortestPath = shortestPath;
     }
 
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Node.class.getSimpleName() + "[", "]")
+                .add("name='" + name + "'")
+                .add("shortestPath=" + shortestPath)
+                .add("distance=" + distance)
+                .add("adjacentNodes=" + adjacentNodes)
+                .toString();
+    }
 }
 
 class Dijkstra {
@@ -185,8 +201,8 @@ class Player {
         }
 
         System.err.println("liste cases:" + map);
-        System.err.println("caseBase:" + caseBase);
-        System.err.println("caseBaseOpposants:" + caseBaseOpposant);
+//        System.err.println("caseBase:" + caseBase);
+//        System.err.println("caseBaseOpposants:" + caseBaseOpposant);
 
         int caseFinale = -1;
         // game loop
@@ -196,6 +212,8 @@ class Player {
             Map<Integer, Node> map2 = new HashMap<Integer, Node>();
             Set<Integer> set = new HashSet<Integer>();
 
+            int totalMyAnts=0;
+
             for (int i = 0; i < numberOfCells; i++) {
                 Node n = new Node("" + i);
                 map2.put(i, n);
@@ -203,6 +221,7 @@ class Player {
                 int myAnts = in.nextInt(); // the amount of your ants on this cell
                 int oppAnts = in.nextInt(); // the amount of opponent ants on this cell
                 //System.err.println("case:" + i + ",ressource:" + resources + ",myAnts:" + myAnts + ",oppAnts:" + oppAnts);
+                totalMyAnts+=myAnts;
                 if (resources > 0 && noCase == -1) {
                     noCase = i;
                 }
@@ -216,25 +235,32 @@ class Player {
                 }
             }
 
+//            System.err.println("map=" + map);
+//            System.err.println("totalMyAnts=" + totalMyAnts);
+//            System.err.println("map2=" + map2);
+//            System.err.println("set=" + set);
+
 
             Graph graph = new Graph();
             for (int i = 0; i < numberOfCells; i++) {
                 Node n = map2.get(i);
                 Case c = map.get(i);
                 if (c != null) {
-                    if (c.neigh0 >= 0) {
-                        Node n2 = map2.get(c.neigh0);
-                        n.addDestination(n2, 1);
-                    }
+                    addDestination(map2, n, c.neigh0);
+                    addDestination(map2, n, c.neigh1);
+                    addDestination(map2, n, c.neigh2);
+                    addDestination(map2, n, c.neigh3);
+                    addDestination(map2, n, c.neigh4);
+                    addDestination(map2, n, c.neigh5);
                 }
                 graph.addNode(n);
             }
 
-            System.err.println("set=" + set);
+//            System.err.println("graph=" + graph);
 
             // Write an action using System.out.println()
-            // To debug: 
-            System.err.println("Debug messages...");
+            // To debug:
+//            System.err.println("Debug messages...");
 
 
             if (set.isEmpty()) {
@@ -249,37 +275,53 @@ class Player {
                     Optional<Node> n2 = graph.getNodes().stream().filter(x -> Objects.equals(x.getName(), "" + no)).findFirst();
                     if (n2.isPresent()) {
                         Integer len = n2.get().getDistance();
-                        if (map3.containsKey(len)) {
-                            map3.get(len).add(no);
-                        } else {
-                            map3.put(len, new ArrayList<>());
-                            map3.get(len).add(no);
-                        }
+                        //if(len<100_000) {
+                            if (map3.containsKey(len)) {
+                                map3.get(len).add(no);
+                            } else {
+                                map3.put(len, new ArrayList<>());
+                                map3.get(len).add(no);
+                            }
+                        //}
                     }
                 }
+//                System.err.println("map3="+map3);
                 String s = "";
                 boolean fin = false;
                 int nb = 0;
                 int max=5;
+                int nbAnts=totalMyAnts;
                 for (Map.Entry<Integer, List<Integer>> entry : map3.entrySet()) {
-                    for (Integer no : entry.getValue()) {
-                        int poids = 0;
-                        int type = map.get(no).type;
-                        if (type == 1) {
-                            poids = 2;
-                        } else if (type == 2) {
-                            poids = 1;
-                        }
-                        if (poids > 0) {
-                            if (s.length() > 0) {
-                                s += ";";
+                    int len= entry.getKey();
+                    if(len<100_000) {
+                        for (Integer no : entry.getValue()) {
+                            int poids = 0;
+                            int type = map.get(no).type;
+                            if (type == 1) {
+                                //poids = 2;
+                                poids = 1;
+                            } else if (type == 2) {
+                                poids = 1;
                             }
-                            s += "LINE " + no + " " + base + " " + poids;
-                            nb++;
+                            if (poids > 0) {
+                                if (s.length() > 0) {
+                                    s += ";";
+                                }
+                                s += "LINE " + no + " " + base + " " + poids;
+                                nb++;
+                            }
+
+                            nbAnts -= len;
+
+                            if (nbAnts <= 0) {
+                                fin = true;
+                                break;
+                            }
                         }
-                        if (nb > max) break;
                     }
-                    if (nb > max) break;
+                    if (fin) {
+                        break;
+                    }
                 }
                 /*for(Integer no:set){
                     int poids=0;
@@ -296,6 +338,9 @@ class Player {
                         s+="LINE "+no+" "+base+" "+poids;
                     }
                 }*/
+                if(s==null||s.isEmpty()){
+                    s="WAIT";
+                }
                 System.out.println(s);
             }
 
@@ -310,4 +355,13 @@ class Player {
             //}
         }
     }
+
+    private static void addDestination(Map<Integer, Node> map2, Node n, int neigh) {
+        if (neigh >= 0) {
+            Node n2 = map2.get(neigh);
+            n.addDestination(n2, 1);
+        }
+    }
+
+
 }
