@@ -293,8 +293,8 @@ class Player {
                             int poids = 0;
                             int type = map.get(no).type;
                             if (type == 1) {
-                                //poids = 2;
-                                poids = 1;
+                                poids = 2;
+                                //poids = 1;
                             } else if (type == 2) {
                                 poids = 1;
                             }
@@ -308,9 +308,9 @@ class Player {
 
                             nbAnts -= len;
 
-//                            if (nbAnts <= 0) {
-//                                fin = true;
-//                                break;
+                            if (nbAnts <= 0) {
+                                fin = true;
+                                break;
 //                            }
                         }
                     }
