@@ -292,14 +292,15 @@ class Player {
                     if (len < 100_000) {
                         int len2 = len;
                         List<Integer> liste2 = new ArrayList<>();
-                        for (Integer no : entry.getValue()) {
-                            Case c = map.get(no);
-                            if (c.type == 1) {// les oeufs au debut
-                                liste2.add(0, no);
-                            } else if (c.type == 2) {// les resources à la fin
-                                liste2.add(no);
-                            }
-                        }
+                        liste2.addAll(entry.getValue());
+//                        for (Integer no : entry.getValue()) {
+//                            Case c = map.get(no);
+//                            if (c.type == 1) {// les oeufs au debut
+//                                liste2.add(0, no);
+//                            } else if (c.type == 2) {// les resources à la fin
+//                                liste2.add(no);
+//                            }
+//                        }
                         for (Integer no : liste2) {
                             int poids = 0;
                             Case c = map.get(no);
@@ -320,7 +321,7 @@ class Player {
                                                 c.neigh4 == n2 || c.neigh5 == n2) {
                                             src = n2;
                                             // la distance est de 1 en plus
-                                            len2 = 1;
+                                            //len2 = 1;
                                             break;
                                         }
                                     }
