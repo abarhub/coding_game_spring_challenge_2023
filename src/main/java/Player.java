@@ -311,7 +311,7 @@ class Player {
                             if (nbAnts <= 0) {
                                 fin = true;
                                 break;
-//                            }
+                            }
                         }
                     }
                     if (fin) {
