@@ -258,11 +258,6 @@ class Player {
 
 //            System.err.println("graph=" + graph);
 
-            // Write an action using System.out.println()
-            // To debug:
-//            System.err.println("Debug messages...");
-
-
             if (set.isEmpty()) {
                 System.out.println("WAIT");
             } else {
@@ -275,14 +270,14 @@ class Player {
                     Optional<Node> n2 = graph.getNodes().stream().filter(x -> Objects.equals(x.getName(), "" + no)).findFirst();
                     if (n2.isPresent()) {
                         Integer len = n2.get().getDistance();
-                        //if(len<100_000) {
+                        if(len<100_000) {
                             if (map3.containsKey(len)) {
                                 map3.get(len).add(no);
                             } else {
                                 map3.put(len, new ArrayList<>());
                                 map3.get(len).add(no);
                             }
-                        //}
+                        }
                     }
                 }
 //                System.err.println("map3="+map3);
@@ -323,36 +318,12 @@ class Player {
                         break;
                     }
                 }
-                /*for(Integer no:set){
-                    int poids=0;
-                    int type=map.get(no).type;
-                    if(type==1){
-                        poids=1;
-                    } else if (type==2){
-                        poids=2;
-                    }
-                    if(poids>0){
-                        if(s.length()>0){
-                            s+=";";
-                        }
-                        s+="LINE "+no+" "+base+" "+poids;
-                    }
-                }*/
                 if(s==null||s.isEmpty()){
                     s="WAIT";
                 }
                 System.out.println(s);
             }
 
-            // WAIT | LINE <sourceIdx> <targetIdx> <strength> | BEACON <cellIdx> <strength> | MESSAGE <text>
-            //System.out.println("WAIT");
-            //if(noCase!=-1){
-            //System.out.println("LINE 0 "+noCase+" 1");
-            //System.out.println("BEACON "+noCase+" 1");
-            //  System.out.println("LINE "+caseFinale+" "+noCase+" 1");
-            //} else {
-            //    System.out.println("WAIT");
-            //}
         }
     }
 
