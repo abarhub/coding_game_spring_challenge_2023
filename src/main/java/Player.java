@@ -313,10 +313,10 @@ class Player {
 
                             nbAnts -= len;
 
-                            if (nbAnts <= 0) {
-                                fin = true;
-                                break;
-                            }
+//                            if (nbAnts <= 0) {
+//                                fin = true;
+//                                break;
+//                            }
                         }
                     }
                     if (fin) {
