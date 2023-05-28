@@ -1,10 +1,14 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 class Case {
 
     int no;
     int type;
     int initialResources;
+    int resources;
+    int myAnts;
+    int oppAnts;
     int neigh0 = -1;
     int neigh1 = -1;
     int neigh2 = -1;
@@ -14,8 +18,9 @@ class Case {
 
     @Override
     public String toString() {
-        return "no=" + no + ",initialResources=" + initialResources + ",neigh0=" + neigh0 +
-                ",neigh1=" + neigh1 + ",neigh2=" + neigh2 + ",neigh3=" + neigh3 + ",neigh4=" + neigh4 + ",neigh5=" + neigh5;
+        return "no=" + no + ",initialResources=" + initialResources + ",resources=" + resources +
+                ",neigh0=" + neigh0 + ",neigh1=" + neigh1 + ",neigh2=" + neigh2 + ",neigh3=" + neigh3 +
+                ",neigh4=" + neigh4 + ",neigh5=" + neigh5 + ", myAnts=" + myAnts + ",oppAnts=" + oppAnts;
     }
 }
 
@@ -221,6 +226,10 @@ class Player {
                 int myAnts = in.nextInt(); // the amount of your ants on this cell
                 int oppAnts = in.nextInt(); // the amount of opponent ants on this cell
                 //System.err.println("case:" + i + ",ressource:" + resources + ",myAnts:" + myAnts + ",oppAnts:" + oppAnts);
+                Case c = map.get(i);
+                c.resources = resources;
+                c.myAnts = myAnts;
+                c.oppAnts = oppAnts;
                 totalMyAnts += myAnts;
                 if (resources > 0 && noCase == -1) {
                     noCase = i;
@@ -271,12 +280,10 @@ class Player {
                     if (n2.isPresent()) {
                         Integer len = n2.get().getDistance();
                         if (len < 100_000) {
-                            if (map3.containsKey(len)) {
-                                map3.get(len).add(no);
-                            } else {
+                            if (!map3.containsKey(len)) {
                                 map3.put(len, new ArrayList<>());
-                                map3.get(len).add(no);
                             }
+                            map3.get(len).add(no);
                         }
                     }
                 }
@@ -292,15 +299,30 @@ class Player {
                     if (len < 100_000) {
                         int len2 = len;
                         List<Integer> liste2 = new ArrayList<>();
-                        liste2.addAll(entry.getValue());
-//                        for (Integer no : entry.getValue()) {
-//                            Case c = map.get(no);
-//                            if (c.type == 1) {// les oeufs au debut
-//                                liste2.add(0, no);
-//                            } else if (c.type == 2) {// les resources à la fin
-//                                liste2.add(no);
-//                            }
-//                        }
+                        List<Integer> liste3 = new ArrayList<>();
+                        List<Integer> liste4 = new ArrayList<>();
+                        //liste2.addAll(entry.getValue());
+                        for (Integer no : entry.getValue()) {
+                            Case c = map.get(no);
+                            if (c.type == 1) {// les oeufs au debut
+                                liste3.add(no);
+                            } else if (c.type == 2) {// les resources à la fin
+                                liste4.add(no);
+                            }
+                        }
+                        Collections.sort(liste3, (x, y) -> -compareByResources(x, y, map));
+                        Collections.sort(liste4, (x, y) -> -compareByResources(x, y, map));
+                        if (!liste3.isEmpty()) {
+                            liste2.add(liste3.get(0));
+                            liste2.addAll(liste4);
+                            if (liste3.size() > 1) {
+                                liste2.addAll(liste3.stream()
+                                        .skip(1)
+                                        .collect(Collectors.toList()));
+                            }
+                        } else {
+                            liste2.addAll(liste4);
+                        }
                         for (Integer no : liste2) {
                             int poids = 0;
                             Case c = map.get(no);
@@ -357,6 +379,13 @@ class Player {
             }
 
         }
+    }
+
+
+    private static int compareByResources(int x, int y, Map<Integer, Case> map) {
+        Case cx = map.get(x);
+        Case cy = map.get(y);
+        return cx.resources - cy.oppAnts;
     }
 
     private static void addDestination(Map<Integer, Node> map2, Node n, int neigh) {
